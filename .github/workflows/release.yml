@@ -186,6 +186,10 @@ jobs:
           path: src
 
       - name: Sistem kütüphaneleri
+        # apt aynası takılırsa iş saatlerce beklemesin.
+        timeout-minutes: 15
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq \
