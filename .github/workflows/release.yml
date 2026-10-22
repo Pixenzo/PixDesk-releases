@@ -197,7 +197,7 @@ jobs:
           sudo apt-get -o DPkg::Lock::Timeout=600 install -y --no-install-recommends \
             libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
             libgtk-layer-shell-dev libpipewire-0.3-dev libspa-0.2-dev \
-            libasound2-dev libxdo-dev libssl-dev clang pkg-config file patchelf
+            libasound2-dev libxdo-dev libssl-dev clang pkg-config file patchelf             gstreamer1.0-plugins-bad gstreamer1.0-libav
 
       - name: Rust
         run: rustup toolchain install stable --profile minimal && rustup default stable
@@ -213,6 +213,9 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # AppImage araçları FUSE olmadan da çalışsın (Actions makinesi).
           APPIMAGE_EXTRACT_AND_RUN: "1"
+          # AppImage'a H.264 için h264parse (bad) ve avdec_h264 (libav) da
+          # girsin; yoksa WebKitGTK H.264 çözemez, görüntü JPEG'e düşer.
+          GSTREAMER_INCLUDE_BAD_PLUGINS: "1"
         run: >-
           npx --yes @tauri-apps/cli@2 build --bundles appimage,deb
           --config '{"bundle":{"createUpdaterArtifacts":true}}'
