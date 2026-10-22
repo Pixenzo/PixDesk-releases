@@ -3,6 +3,9 @@
 # Kullanım (PowerShell):
 #   irm https://raw.githubusercontent.com/Pixenzo/PixDesk-releases/main/install.ps1 | iex
 #
+# Belirli bir sürüm (ör. bir deneme sürümü) için önce:
+#   $env:PIXDESK_VERSION = 'v0.3.0'
+#
 # Son sürümün kurulum paketini indirir, SHA-256 özetini sürümdeki
 # SHA256SUMS.txt ile karşılaştırır ve kurulumu başlatır. Kurulum yönetici
 # izni ister (UAC). Paket tarayıcıyla indirilmediği için Windows'un
@@ -15,6 +18,13 @@
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
     $base = 'https://github.com/Pixenzo/PixDesk-releases/releases/latest/download'
+    if ($env:PIXDESK_VERSION) {
+        if ($env:PIXDESK_VERSION -notmatch '^v\d+\.\d+\.\d+$') {
+            Write-Host "Geçersiz sürüm: $($env:PIXDESK_VERSION) (ör. v0.3.0)" -ForegroundColor Red
+            return
+        }
+        $base = "https://github.com/Pixenzo/PixDesk-releases/releases/download/$($env:PIXDESK_VERSION)"
+    }
 
     if (-not [Environment]::Is64BitOperatingSystem) {
         Write-Host 'PixDesk yalnızca 64 bit Windows üzerinde çalışır.' -ForegroundColor Red
