@@ -61,7 +61,10 @@
 
     Write-Host 'Kurulum başlatılıyor (yönetici izni istenecek)...'
     try {
-        Start-Process -FilePath $file -Wait
+        # Yalnızca kurulum paketi beklenir. `-Wait` paketin sonunda açtığı
+        # PixDesk'i de beklerdi; betik uygulama kapanana kadar takılı kalırdı.
+        $installer = Start-Process -FilePath $file -PassThru
+        $installer.WaitForExit()
     } finally {
         Remove-Item $file -Force -ErrorAction SilentlyContinue
     }
