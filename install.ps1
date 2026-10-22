@@ -39,7 +39,9 @@
         return
     }
     $name = [IO.Path]::GetFileName($url)
+    # GitHub sürüm dosyalarını ikili veri olarak sunar; içerik metne çevrilir.
     $sums = (Invoke-WebRequest "$base/SHA256SUMS.txt" -UseBasicParsing).Content
+    if ($sums -is [byte[]]) { $sums = [Text.Encoding]::UTF8.GetString($sums) }
     $expected = ($sums -split "`n" | Where-Object { $_ -match [regex]::Escape($name) } | Select-Object -First 1) -replace '\s.*$', ''
     if (-not $expected) {
         Write-Host 'Sürümün özet dosyasında bu paket yok.' -ForegroundColor Red
